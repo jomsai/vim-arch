@@ -1,0 +1,89 @@
+Arch Linux Installation via UrbanPenguin Method
+SEE==> https://www.theurbanpenguin.com/installing-arch-linux/
+
+
+==> Install the 64 Bit ISO
+==> Change the Keyboard Keys if needed but the default is US
+# loadkeys uk
+
+==> Check the network and record the IP. Could aslo be ip a s
+# ip addr show
+
+==> Need to know the device path for the HD to install on eg /dev/sda
+# lsblk
+
+==> fdisk tool to partition HD. 256M type=swap, Remainder of HD as defaults gives you a type=Linux
+# fdisk /dev/sda
+
+==> Next use sda1 for swap and sda2 for an XFS Silicon graphics advanced HD FS. -L=LABEL
+# mkswap /dev/sda1
+# mkfs.xfs -L ROOT /dev/sda2
+
+==> Check the work above
+# blkid
+
+==> We need to mount the new system so we can form it separate from the host OS
+==> 1st mount sda2 then sda1 as below then turn on the swap function of the swap partition
+==> swapon Can be used to display swap space in use also
+mount /dev/sdb2 /mnt
+swapon /dev/sdb1
+swapon -s 
+
+==> Now add packages. The example is for just a CLI OS but I want a GUI
+==> need the 'base' for basics and 'base-devel' for sed gcc
+==> UrbanPenguin added bash-completions vim grub openssh
+==> I will add more like xorg etc
+# pacstrap /mnt base base-devel grub vim bash-completion openssh
+
+==> Generate a new /etc/fstab file to mount the system at boot
+==> Display our work /mnt/etc/fstab file, !$ is the last argument
+# genfstab -pU /mnt >> /mnt/etc/fstab
+# cat !$
+
+==> Now we need to chroot into the new system and configure it
+# arch-chroot /mnt
+
+==> Add ROOT password
+# passwd root
+
+==> Set up a USER with a home DIR & add to wheel group
+# useradd -m tux -G wheel
+# passwd tux
+
+==> give the system a HOSTNAME which can be a FQDN or a Greek God as here
+==> -e is so the escaped \t=TAB char to the hosts file so we can ssh to zeus instead of an IP
+# echo -e "127.0.1.1\tzeus" >> /etc/hosts
+
+==> Set the TimeZone for me in Asia
+# ln -s /usr/share/zoneinfo/Asia/Bangkok /etc/localtime
+
+==> Set the clock to localtime but the hardware clock to UTC
+# hwclock --systohc --utc
+
+==> Set the locale so dates format as per your country
+# vim /etc/locale.gen    ==> Edit this file and UNcomment your locale line en_US.UTF-8
+# locale-gen    ==> Genegrate the actual locale config file for your locale
+echo LANG=en_GB.UTF-8 > /etc/locale.conf    ==> Write the locale to the locale.conf file
+export LANG=en_GB.UTF-8    ==> Add the locale as an ENV VAR
+
+==> Generate a ramdisk file & set up grub
+# mkinitcpio -p linux
+# grub-install /dev/sda
+# grub-mkconfig -o /boot/grub/grub.cfg
+
+==> When we 1st boot the system ne need the IP & interface so we can start the network
+# systemctl enable sshd dhcpcd
+
+==> Exit the chroot and reboot the new system off the ISO file
+# exit
+# shutdown -h now
+
+==> Upon reboot we need to check our new system & PERMANENT set some items
+# localectl set-keymap us
+# localtectl set-locale LANG=en_US.UTF-8
+==> UNcomment the wheel line in the /etc/sudoers file
+==> # %wheel ALL=(ALL:ALL) ALL  ==> %wheel ALL=(ALL:ALL) ALL
+
+********Finish up from the VIDEO
+
+
