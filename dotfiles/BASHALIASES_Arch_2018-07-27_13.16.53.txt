@@ -227,7 +227,7 @@ alias armor2='sudo perl -pi -e 's,GRUB_CMDLINE_LINUX="(.*)"$,GRUB_CMDLINE_LINUX=
 alias armor3='sudo update-grub && sudo reboot'
 alias armorstatus='sudo aa-status'
 alias armormodule='sudo cat /sys/module/apparmor/parameters/enabled'  # Y=Yes N=No & ya got a problem!
-alias armorconfined='ps auxZ | grep -v '\''^unconfined'\'''
+#alias armorconfined='ps auxZ | grep -v '\''^unconfined'\'''
 alias armorstart='sudo /etc/init.d/apparmor start'
 alias armorclear='sudo /etc/init.d/apparmor start apparmor ACTION=clear' # clear policy cache
 alias armorunload='sudo /etc/init.d/apparmor start apparmor ACTION=teardown' # unload all policy
@@ -409,6 +409,7 @@ alias gcob='git checkout -b'
 alias gf='git fetch'
 alias gs='git status'                       #gs:    Git status
 alias gc='git commit -m'                    #gc:    Git commit w/ message
+alias gcl='git clone'
 alias gpu='git pull'                        #gpu:   Git pull
 alias gp='git push'                         #gp:    Git push
 alias gr='git revert HEAD'                  #gr:    Git revert HEAD
